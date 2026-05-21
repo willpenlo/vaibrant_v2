@@ -5,6 +5,8 @@ import datetime
 import json
 from openai import OpenAI
 from dotenv import load_dotenv
+from database import init_db, save_scan
+from parser import parse_python_file
 
 load_dotenv()
 
@@ -14,6 +16,7 @@ class SecurityScanner:
         self.client = OpenAI()
         self.results = []
         self.skipped_files = []
+        init_db()
     
     def read_file(self, filepath):
         try:
@@ -31,18 +34,26 @@ class SecurityScanner:
         return "UNKNOWN"
     
     def build_prompt(self, code_content, filename):
+        from parser import parse_python_file
+        structure = parse_python_file(code_content)
+
         return f"""You are a security analyst reviewing code for vAIbrant.
 
         File: {filename}
+
+        Pre-analysis detected:
+        - Imports: {structure.get('imports', [])}
+        - Functions: {structure.get('functions', [])}
+        - Dangerous calls: {structure.get('dangerous_calls', [])}
+
+        Full Code:
+        {code_content}
 
         Analyze for:
         1. Security vulnerabilities
         2. Hardcoded secrets
         3. Dangerous function calls
         4. Risk level: LOW / MEDIUM / HIGH / CRITICAL
-
-        Code:
-        {code_content}
 
         At the end, format your response with clear sections. Add a section called non-technical language where you explain 
         the vulnerabilities in simple terms for non-technical users. 
@@ -79,8 +90,17 @@ class SecurityScanner:
         prompt = self.build_prompt(code, filepath)
         result = self.call_api(prompt)
         risk = self.extract_risk_level(result)
+        structure = parse_python_file(code)
+        scan_id = save_scan(
+            filename=filepath,
+            risk_level=risk,
+            lines_of_code=len(code.splitlines()),
+            analysis=result,
+            imports=structure.get("imports", []),
+            dangerous_calls=structure.get("dangerous_calls", [])
+        )
+        print(f"Saved to DB - ID: {scan_id}")
         report_name = self.save_report(filepath, result)
-
         self.results.append({
             "file": filepath,
             "risk": risk,

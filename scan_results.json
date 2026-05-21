@@ -1,19 +1,19 @@
 {
-  "scan_date": "2026-05-08T12:21:08.169423",
+  "scan_date": "2026-05-20T15:12:07.136040",
   "total_files": 2,
   "results": [
     {
       "file": "test_project/bad_code.py",
-      "risk": "CRITICAL",
-      "report": "report_test_project_bad_code_py_20260508_122054.txt",
-      "timestamp": "2026-05-08T12:20:54.576585",
+      "risk": "HIGH",
+      "report": "report_test_project_bad_code_py_20260520_151153.txt",
+      "timestamp": "2026-05-20T15:11:53.574354",
       "lines_of_code": 15
     },
     {
       "file": "test_project/good_code.py",
-      "risk": "MEDIUM",
-      "report": "report_test_project_good_code_py_20260508_122108.txt",
-      "timestamp": "2026-05-08T12:21:08.169246",
+      "risk": "LOW",
+      "report": "report_test_project_good_code_py_20260520_151207.txt",
+      "timestamp": "2026-05-20T15:12:07.135965",
       "lines_of_code": 20
     }
   ],
