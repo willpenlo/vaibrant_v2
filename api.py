@@ -50,8 +50,7 @@ def analyze_code(request: CodeRequest,
     )
 
 @app.post("/analyze/upload")
-async def analyze_file_upload(file: UploadFile = File(...),
-                               x_api_key: Optional[str] = Header(None)):
+async def analyze_file_upload(file: UploadFile = File(...),x_api_key: Optional[str] = Header(None)):
     verify_api_key(x_api_key)
     
     allowed = [".py", ".js", ".ts"]
@@ -87,7 +86,7 @@ async def analyze_file_upload(file: UploadFile = File(...),
 @app.get("/history")
 def get_history(x_api_key: Optional[str] = Header(None)):
     verify_api_key(x_api_key)
-    
+
     scans = get_all_scans()
     return {"total": len(scans), "scans": scans}
 

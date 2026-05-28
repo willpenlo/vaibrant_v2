@@ -34,19 +34,24 @@ class SecurityScanner:
         return "UNKNOWN"
     
     def build_prompt(self, code_content, filename):
-        from parser import parse_python_file
-        structure = parse_python_file(code_content)
+        ext = filename.split(".")[-1] if "." in filename else "unknown"
 
-        return f"""You are a security analyst reviewing code for vAIbrant.
+        if ext == "py":
+            from parser import parse_python_file
+            structure = parse_python_file(code_content)
+            pre = f"""Pre-analysis detected:
+            - Imports: {structure.get('imports', [])}
+            - Functions: {structure.get('functions', [])}
+            - Dangerous calls: {structure.get('dangerous_calls', [])}"""
+        else:
+            pre = f"Language: {ext} (static analysis not available)"
+
+        return f"""You are a security analyst for vAIbrant.
 
         File: {filename}
+        {pre}
 
-        Pre-analysis detected:
-        - Imports: {structure.get('imports', [])}
-        - Functions: {structure.get('functions', [])}
-        - Dangerous calls: {structure.get('dangerous_calls', [])}
-
-        Full Code:
+        Full code:
         {code_content}
 
         Analyze for:
@@ -54,7 +59,7 @@ class SecurityScanner:
         2. Hardcoded secrets
         3. Dangerous function calls
         4. Risk level: LOW / MEDIUM / HIGH / CRITICAL
-
+        
         At the end, format your response with clear sections. Add a section called non-technical language where you explain 
         the vulnerabilities in simple terms for non-technical users. 
         Remember to explain vulnerabilities in simple terms for non-technical users, and the potential impact if not addressed, 
