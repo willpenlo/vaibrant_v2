@@ -1,0 +1,9 @@
+vAIbrant is an AI-powered security analyzer built with Python and FastAPI.
+It scans Python, JavaScript, and TypeScript files for security vulnerabilities.
+The scanner uses OpenAI GPT-4o-mini to analyze code and identify risks.
+Risk levels are: LOW, MEDIUM, HIGH, and CRITICAL.
+The system uses AST parsing to extract imports, functions, and dangerous calls before AI analysis.
+Results are stored in a SQLite database called vaibrant.db.
+The API is built with FastAPI and runs on port 8002 locally.
+Authentication uses API keys passed via the x-api-key header.
+The dashboard is built with Streamlit and shows scan history and stats.
