@@ -48,4 +48,3 @@ if __name__=="__main__":
         if chunks:
             embedding = embed_text(chunks[0])
             print(f"First chunk embedding lenght: {len(embedding)}")
-            

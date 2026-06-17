@@ -35,7 +35,6 @@ def search(query, n_results=3):
         n_results=n_results,
     )
     chunks = results["documents"][0]
-    print("DEBUG chunks:", chunks)
     sources = [m["source"] for m in results ["metadatas"][0]]
     return list(zip(chunks, sources))
 
