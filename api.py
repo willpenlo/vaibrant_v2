@@ -5,6 +5,10 @@ from pydantic import BaseModel
 from scanner import SecurityScanner
 from database import get_all_scans, get_scans_by_risk, get_scan_by_id
 from typing import Optional
+from monitor import get_stats_data
+from dotenv import load_dotenv
+
+load_dotenv()
 
 VAIBRANT_API_KEY = os.getenv("VAIBRANT_API_KEY")
 
@@ -105,9 +109,8 @@ def get_by_risk(risk_level: str):
     return {"risk_level": level, "total": len(scans), "scans": scans}
 
 @app.get("/stats")
-def get_stats(x_api_key: Optional[str] = Header(None)):
+def get_scan_stats(x_api_key: Optional[str] = Header(None)):
     verify_api_key(x_api_key)
-
     all_scans = get_all_scans()
     counts = {"CRITICAL": 0, "HIGH": 0, "MEDIUM": 0, "LOW": 0, "UNKNOWN": 0}
     for s in all_scans:
@@ -115,3 +118,8 @@ def get_stats(x_api_key: Optional[str] = Header(None)):
         if lv in counts:
             counts[lv] += 1
     return {"total_scans": len(all_scans), "by_risk": counts}
+
+@app.get("/monitor")
+def get_monitor_stats(x_api_key: Optional[str] = Header(None)):
+    verify_api_key(x_api_key)
+    return get_stats_data()

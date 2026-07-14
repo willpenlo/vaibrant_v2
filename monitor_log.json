@@ -1,0 +1,38 @@
+[
+  {
+    "endpoint": "analyze",
+    "timestamp": "2026-07-14T15:39:18.142253",
+    "input_tokens": 150,
+    "output_tokens": 300,
+    "latency_ms": 1200,
+    "cost_usd": 0.000405,
+    "success": true
+  },
+  {
+    "endpoint": "analyze",
+    "timestamp": "2026-07-14T15:39:18.142783",
+    "input_tokens": 200,
+    "output_tokens": 400,
+    "latency_ms": 980,
+    "cost_usd": 0.00054,
+    "success": true
+  },
+  {
+    "endpoint": "analyze",
+    "timestamp": "2026-07-14T15:39:18.142938",
+    "input_tokens": 100,
+    "output_tokens": 0,
+    "latency_ms": 500,
+    "cost_usd": 0.00015,
+    "success": false
+  },
+  {
+    "endpoint": "analyze",
+    "timestamp": "2026-07-14T15:48:01.910433",
+    "input_tokens": 202,
+    "output_tokens": 497,
+    "latency_ms": 10615.358114242554,
+    "cost_usd": 0.000601,
+    "success": true
+  }
+]

@@ -1,12 +1,15 @@
+from email.mime import message
 import glob
 import os
 import sys
 import datetime
 import json
+from unittest import result
 from openai import OpenAI
 from dotenv import load_dotenv
 from database import init_db, save_scan
 from parser import parse_python_file
+from monitor import log_request, Timer
 
 load_dotenv()
 
@@ -62,12 +65,21 @@ class SecurityScanner:
         return prompt
     
     def call_api(self, prompt):
-        message = self.client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}]
+        with Timer() as t:
+            message = self.client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}]
+            )
+        result = message.choices[0].message.content
+        usage = message.usage
+        log_request(
+            endpoint="analyze",
+            input_tokens=usage.prompt_tokens,
+            output_tokens=usage.completion_tokens,
+            latency_ms=t.elapsed_ms
         )
-        return message.choices[0].message.content
-    
+        return result
+
     def save_report(self, filepath, analysis):
         time_stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         base_name = filepath.replace("/", "_").replace(".", "_")
