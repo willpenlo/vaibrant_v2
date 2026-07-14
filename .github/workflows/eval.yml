@@ -1,0 +1,30 @@
+name: Run vAIbrant Evals
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Index RAG documents
+        run: cd rag && python vector_store.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - name: Run retrieval evals
+        run: cd rag && python eval_retrieval.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - name: Run generation evals
+        run: cd rag && python eval_generation.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

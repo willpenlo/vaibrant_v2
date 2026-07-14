@@ -33,38 +33,33 @@ class SecurityScanner:
                 return level
         return "UNKNOWN"
     
-    def build_prompt(self, code_content, filename):
+    def build_prompt(self, code_content, filename, prompt_version="v1"):
+        from prompt_manager import render_prompt, log_prompt_use
+        
         ext = filename.split(".")[-1] if "." in filename else "unknown"
 
         if ext == "py":
             from parser import parse_python_file
             structure = parse_python_file(code_content)
-            pre = f"""Pre-analysis detected:
-            - Imports: {structure.get('imports', [])}
-            - Functions: {structure.get('functions', [])}
-            - Dangerous calls: {structure.get('dangerous_calls', [])}"""
+            imports = structure.get('imports', [])
+            functions = structure.get('functions', [])
+            dangerous_calls = structure.get('dangerous_calls', [])
         else:
-            pre = f"Language: {ext} (static analysis not available)"
+            imports = []
+            functions = []
+            dangerous_calls = [f"Language: {ext} — static analysis not available"]
 
-        return f"""You are a security analyst for vAIbrant.
+        prompt = render_prompt(
+            prompt_version,
+            filename=filename,
+            imports=imports,
+            functions=functions,
+            dangerous_calls=dangerous_calls,
+            code=code_content
+        )
 
-        File: {filename}
-        {pre}
-
-        Full code:
-        {code_content}
-
-        Analyze for:
-        1. Security vulnerabilities
-        2. Hardcoded secrets
-        3. Dangerous function calls
-        4. Risk level: LOW / MEDIUM / HIGH / CRITICAL
-        
-        At the end, format your response with clear sections. Add a section called non-technical language where you explain 
-        the vulnerabilities in simple terms for non-technical users. 
-        Remember to explain vulnerabilities in simple terms for non-technical users, and the potential impact if not addressed, 
-        use simple terms and a professional tone, as if explaining to a business person.
-        """
+        log_prompt_use(prompt_version)
+        return prompt
     
     def call_api(self, prompt):
         message = self.client.chat.completions.create(
